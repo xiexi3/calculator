@@ -61,10 +61,10 @@ document.body.appendChild(container);
 liElements.forEach((li) => {
 	li.addEventListener("click", function () {
 		console.log(li.getAttribute('data-key'));
-		if (li.querySelector("a").getAttribute('data-key') == 'clear') {
+		if (li.querySelector("a").dataset.key == 'clear') {
 			screen.textContent = "";
 			screen.style.fontSize = "3em";
-		} else if (li.querySelector("a").getAttribute('data-key') == '=') {
+		} else if (li.querySelector("a").dataset.key == '=') {
 			try {
 				const result = eval(screen.textContent);
 				console.log('Result:', result);
