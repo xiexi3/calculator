@@ -50,29 +50,25 @@ let liElements = mockData.map((obj) => {
 
 document.body.appendChild(container);
 
+// const estilo = screen.style.fontSize;
+// const pantalla = screen.textContent;
 
 let errorState = false;
 
 liElements.forEach((li) => {
 	li.addEventListener("click", function () {
-		const dataSetBtn = li.querySelector("a").dataset.key;
+		const calcBtn = li.querySelector("a").dataset.key;
 
-		if (errorState && dataSetBtn !== 'clear') {
+		if (errorState && calcBtn !== 'clear') {
 			return;
 		}
 
-		if (dataSetBtn == 'clear') {
+		if (calcBtn == 'clear') {
 			screen.textContent = "";
 			screen.style.fontSize = "3em";
 			errorState = false; 
-		} else if (dataSetBtn == '=') {
+		} else if (calcBtn == '=') {
 			try {
-				if(screen.textContent.includes('x')) {
-					const nuevaExpresion = screen.textContent.replace(/x/g, "*");
-					const result = eval(nuevaExpresion);
-					console.log('Result:', result);
-					screen.textContent = result;
-				}
 				const result = eval(screen.textContent);
 				console.log('Result:', result);
 				screen.textContent = result;
@@ -88,8 +84,7 @@ liElements.forEach((li) => {
 				}
 			}
 		} else {
-			// console.log(li.textContent);
-			const expresionPantalla = li.textContent;
+			const expresionPantalla = calcBtn;
 			screen.textContent += expresionPantalla;
 		}
 	})
