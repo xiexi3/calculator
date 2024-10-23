@@ -2,7 +2,7 @@ const mockData = [
 	{ textcontent: "C", "data-key": "clear" },
 	{ textcontent: "-", "data-key": "-" },
 	{ textcontent: "/", "data-key": "/" },
-	{ textcontent: "x", "data-key": "x" },
+	{ textcontent: "x", "data-key": "*" },
 	{ textcontent: "7", "data-key": "7" },
 	{ textcontent: "8", "data-key": "8" },
 	{ textcontent: "9", "data-key": "9" },
@@ -19,17 +19,12 @@ const mockData = [
 	{ textcontent: ".", "data-key": ".", class: "shift" }
 ];
 
-const SPECIAL_CHARACTERS = ['+', '-', '*', '/']
-
-// Crear el contenedor principal
 const container = document.createElement('div');
 container.className = 'calculator';
 
-// Crear el contenedor principal
 const screen = document.createElement('div');
 screen.className = 'screen';
 
-// Crear la lista de respuestas
 const buttonList = document.createElement('ul');
 buttonList.id = "buttons";
 buttonList.className = 'buttons';
@@ -37,17 +32,15 @@ buttonList.className = 'buttons';
 container.appendChild(screen);
 container.appendChild(buttonList);
 
-
-let liElements = mockData.map((boton) => {
+let liElements = mockData.map((obj) => {
 	const li = document.createElement("li");
-
 	const anchor = document.createElement("a");
 	anchor.href = "#";
-	anchor.textContent = boton.textcontent;
+	anchor.textContent = obj.textcontent;
 
-	anchor.setAttribute("data-key", boton["data-key"]);
-	if (boton.class) {
-		anchor.className = boton.class;
+	anchor.setAttribute("data-key", obj["data-key"]);
+	if (obj.class) {
+		anchor.className = obj.class;
 	}
 
 	li.appendChild(anchor);
@@ -58,39 +51,46 @@ let liElements = mockData.map((boton) => {
 document.body.appendChild(container);
 
 
+let errorState = false;
+
 liElements.forEach((li) => {
 	li.addEventListener("click", function () {
-		console.log(li.getAttribute('data-key'));
-		if (li.querySelector("a").dataset.key == 'clear') {
+		const dataSetBtn = li.querySelector("a").dataset.key;
+
+		if (errorState && dataSetBtn !== 'clear') {
+			return;
+		}
+
+		if (dataSetBtn == 'clear') {
 			screen.textContent = "";
 			screen.style.fontSize = "3em";
-		} else if (li.querySelector("a").dataset.key == '=') {
+			errorState = false; 
+		} else if (dataSetBtn == '=') {
 			try {
+				if(screen.textContent.includes('x')) {
+					const nuevaExpresion = screen.textContent.replace(/x/g, "*");
+					const result = eval(nuevaExpresion);
+					console.log('Result:', result);
+					screen.textContent = result;
+				}
 				const result = eval(screen.textContent);
 				console.log('Result:', result);
 				screen.textContent = result;
 			} catch (error) {
+				screen.style.fontSize = "1em";
+				errorState = true;
 				if (error instanceof EvalError) {
-					screen.style.fontSize = "1em";
-					console.log('EvalError:', error.message);
+					// console.log('EvalError:', error.message);
 					screen.textContent = error.message;
 				} else {
-					screen.style.fontSize = "1em";
-					console.log('Error:', error.message);
+					// console.log('Error:', error.message);
 					screen.textContent = error.message;
 				}
 			}
 		} else {
-			console.log(li.textContent);
+			// console.log(li.textContent);
 			const expresionPantalla = li.textContent;
 			screen.textContent += expresionPantalla;
-
-			// if (SPECIAL_CHARACTERS.indexOf(expresionPantalla) !== -1) {
-			// 	console.log(`El botón "${expresionPantalla}" es un caracter especial`);
-			// } else {
-			// 	console.log(`El botón "${expresionPantalla}" NO es un caracter especial`);
-			// }
 		}
-
 	})
 });
